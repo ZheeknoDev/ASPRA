@@ -1,0 +1,15 @@
+{
+    "require": {
+        "filp/whoops": "^2.13",
+        "rakit/validation": "^1.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "App\\Core\\": "core/"
+        }
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^5.3"
+    }
+}
