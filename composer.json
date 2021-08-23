@@ -1,15 +1,20 @@
 {
+    "name": "zheeknodev/aspra",
+    "description": "A Simple PHP RESTful API, It's a case study and practice for the beginner or mediumly PHP developer.",
+    "type": "project",
     "require": {
         "filp/whoops": "^2.13",
         "rakit/validation": "^1.4"
     },
-    "autoload": {
-        "psr-4": {
-            "App\\": "app/",
-            "App\\Core\\": "core/"
-        }
-    },
     "require-dev": {
         "symfony/var-dumper": "^5.3"
-    }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marry Go Round",
+            "email": "million8.me@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
 }
