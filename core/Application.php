@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @category Class
+ * @package  App/Core/
+ * @author   Marry Go Round <million8.me@gmail.com>
+ * @license  https://opensource.org/licenses/MIT - MIT License 
+ * @link     https://github.com/ZheeknoDev/aspra
+ */
+
 namespace App\Core;
 
 use App\Core\Router\Request;

@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @category Class
+ * @package  App/Core/Router
+ * @author   Marry Go Round <million8.me@gmail.com>
+ * @license  https://opensource.org/licenses/MIT - MIT License 
+ * @link     https://github.com/ZheeknoDev/aspra
+ */
+
 namespace App\Core\Router;
 
 final class Request
@@ -7,6 +15,11 @@ final class Request
     public function __construct()
     {
         $this->setRequestVariable();
+    }
+
+    final public function __debugInfo()
+    {
+        return;
     }
 
     /**

@@ -3,11 +3,11 @@
 return [
 
     /**
-     * @author ZheeknoDev <million8.me@gmail.com>
-     * @package config/app
-     * @category config
-     * @license https://opensource.org/licenses/MIT - MIT License 
-     * @copyright 2019-2021 ZheeknoDev by Marry Go Round
+     * @category File
+     * @package  App/Config
+     * @author   Marry Go Round <million8.me@gmail.com>
+     * @license  https://opensource.org/licenses/MIT - MIT License 
+     * @link     https://github.com/ZheeknoDev/aspra
      */
 
     /* ==============================================

@@ -1,12 +1,18 @@
 <?php
 
+/**
+ * @category Class
+ * @package  App/Core/Auth
+ * @author   Marry Go Round <million8.me@gmail.com>
+ * @license  https://opensource.org/licenses/MIT - MIT License 
+ * @link     https://github.com/ZheeknoDev/aspra
+ */
+
 namespace App\Core\Auth;
 
-use App\Core\Config;
 use App\Core\Database\DB;
 use App\Core\Router\Request;
 use App\Core\Router\Response;
-use Exception;
 use PDOException;
 
 final class Auth
@@ -32,12 +38,23 @@ final class Auth
         }
     }
 
+    final public function __debugInfo()
+    {
+        return;
+    }
+
     final public function __get($name)
     {
         return self::$_instance[$name];
     }
 
-    final public function access(string $username, string $password)
+    /**
+     * validate the username & password to get authorized
+     * @param string $username
+     * @param string $password
+     * @return bool
+     */
+    final public function access(string $username, string $password) : bool
     {
         if (!empty(self::$_authenticated) && self::$_authenticated == session_id()) {
             return true;
@@ -77,6 +94,10 @@ final class Auth
         return false;
     }
 
+    /**
+     * create a token
+     * @return array|null
+     */
     final public function getToken()
     {
         if (self::$_authenticated == session_id()) {
@@ -142,7 +163,12 @@ final class Auth
         return null;
     }
 
-    private function getUserGroup(string $userGroupName = null)
+    /**
+     * define the user's group name
+     * @param string $userGroupName
+     * @return string
+     */
+    private function getUserGroup(string $userGroupName = null) : string
     {
         if (!empty($userGroupName)) {
             $userGroup = strtolower($userGroupName);
@@ -155,11 +181,21 @@ final class Auth
         return null;
     }
 
-    final public static function hash_password(string $password)
+    /**
+     * create hash password
+     * @param string $password
+     * @return string
+     */
+    final public static function hash_password(string $password) : string
     {
         return password_hash($password, PASSWORD_DEFAULT);
     }
 
+    /**
+     * validate the authorized request
+     * with Bearer authorization token
+     * @return bool
+     */
     final public function requestApi(): bool
     {
         if (!empty(self::$_request->hasAuthorized('bearer'))) {
@@ -168,11 +204,21 @@ final class Auth
         return false;
     }
 
-    final public static function via(string $userGroupName = null)
+    /**
+     * the instance function of class
+     * @param string $userGroupName
+     * @return object 
+     */
+    final public static function via(string $userGroupName = null) : object
     {
         return new self(new \App\Core\Router\Request, $userGroupName);
     }
 
+    /**
+     * verify a token
+     * @param string $token
+     * @return bool
+     */
     private function verifyToken(string $token): bool
     {
         $userToken = DB::table('user_tokens')
@@ -189,22 +235,22 @@ final class Auth
             # find user's group
             $clientToken = DB::table('client_tokens')->find($userToken->client_id);
 
-            if(!empty($user->id) && !empty($clientToken->id)) {
+            if (!empty($user->id) && !empty($clientToken->id)) {
                 # set user's group
-                $userGroup = $this->getUserGroup($clientToken->group); 
+                $userGroup = $this->getUserGroup($clientToken->group);
 
                 # set user's details
                 $user->userId = $user->id;
                 $userRemember = $user->remember;
                 unset($user->id, $user->password, $user->remember);
-                
+
                 # has authorized or not ?
                 $reverseToken = Encryption::reverseToken([
                     'userId' => $user->userId,
                     'userRemember' => $userRemember,
                     'token' => $userToken->token,
                 ], $userGroup);
-                if($reverseToken) {
+                if ($reverseToken) {
                     self::$_user_group = $userGroup;
                     self::$_instance = (array) $user;
                     self::$_authenticated = session_id();

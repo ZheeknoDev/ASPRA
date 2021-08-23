@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @category Class
+ * @package  App/Controller
+ * @author   Marry Go Round <million8.me@gmail.com>
+ * @license  https://opensource.org/licenses/MIT - MIT License 
+ * @link     https://github.com/ZheeknoDev/aspra
+ */
+
 namespace App\Controllers;
 
 use App\Core\Auth\Auth;
@@ -8,7 +16,31 @@ use App\Core\Database\DB;
 
 class AuthController extends Controller
 {
-    public function login()
+    /**
+     * Check the username & password to get a token
+     * @param string $username
+     * @param string $password
+     * @return JSON
+     */
+    private function checkUserGetToken(string $username, string $password)
+    {
+        if (Auth::via('users')->access($username, $password)) {
+            if (Auth::users()->getToken() !== null) {
+                $userToken = Auth::users()->getToken();
+                $response = ['username' => $username];
+                $response = array_merge($response, $userToken);
+                return $this->response->json_form_response($response, true);
+            }
+        }
+        return $this->response->redirect('/401');
+    }
+
+    /**
+     * user logged in to renew token
+     * when the token of users has expired
+     * @return JSON
+     */
+    public function userGetToken()
     {
         $input = $this->request->body();
         $validation = $this->validator->validate((array) $input, [
@@ -29,10 +61,14 @@ class AuthController extends Controller
         }
 
         # Has authorized or not ?
-        return $this->validateGetUserToken($input->username, $input->password);
+        return $this->checkUserGetToken($input->username, $input->password);
     }
 
-    public function register()
+    /**
+     * user register to get token
+     * @return JSON
+     */
+    public function userRegister()
     {
         $input = $this->request->body();
         $validation = $this->validator->validate((array) $input, [
@@ -81,22 +117,9 @@ class AuthController extends Controller
                     'remember' => $this->random_string(32)
                 ])->run();
             # get the authorize and user's token
-            return $this->validateGetUserToken($input->username, $input->password);
+            return $this->checkUserGetToken($input->username, $input->password);
         } catch (\Exception $e) {;
             return $this->response->json_form_response($e->getMessage(), false, 500);
         }
-    }
-
-    private function validateGetUserToken(string $username, string $password)
-    {
-        if (Auth::via('users')->access($username, $password)) {
-            if (Auth::users()->getToken() !== null) {
-                $userToken = Auth::users()->getToken();
-                $response = ['username' => $username];
-                $response = array_merge($response, $userToken);
-                return $this->response->json_form_response($response, true);
-            }
-        }
-        return $this->response->redirect('/401');
     }
 }

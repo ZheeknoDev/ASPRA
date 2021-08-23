@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @category Class
+ * @package  App/Core/Middleware
+ * @author   Marry Go Round <million8.me@gmail.com>
+ * @license  https://opensource.org/licenses/MIT - MIT License 
+ * @link     https://github.com/ZheeknoDev/aspra
+ */
+
 namespace App\Core\Middlewares;
 
 use App\Core\Middlewares\InterfaceMiddleware;
@@ -17,6 +25,11 @@ class Middleware
         $this->callable = function ($request) {
             return $request;
         };
+    }
+
+    final public function __debugInfo()
+    {
+        return;
     }
 
 

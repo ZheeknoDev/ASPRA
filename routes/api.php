@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @category File
+ * @package  Routes
+ * @author   Marry Go Round <million8.me@gmail.com>
+ * @license  https://opensource.org/licenses/MIT - MIT License 
+ * @link     https://github.com/ZheeknoDev/aspra
+ */
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -7,6 +15,7 @@
 | Here is where you can register API routes for your application.
 */
 
+# wellcome
 $router->get('/', function () use ($router) {
     return $router->response->json([
         'StatusCode' => http_response_code(),
@@ -17,16 +26,16 @@ $router->get('/', function () use ($router) {
     ]);
 });
 
-$router->group(['prefix' => '/api/v1/auth', 'middleware' => ['api']], function () use ($router) {
+$router->group(['prefix' => '/api/v1/auth/users', 'middleware' => ['api']], function () use ($router) {
     # user register to get a new token
-    $router->post('/register', 'AuthController:register');
-    # user login to get token
-    $router->post('/login', 'AuthController:login');
+    $router->post('/register', 'AuthController:userRegister');
+    # user logged in to renew a token
+    $router->post('/get-token', 'AuthController:userGetToken');
 });
 
 $router->group(['prefix' => '/api/v1', 'middleware' => ['api','auth']], function () use ($router) {
-    # example for send reqeust
-    $router->get('/', function () use ($router) {
+    # example for testing passing request through the middlewares
+    $router->get('/example', function () use ($router) {
         return $router->response->json([
             'StatusCode' => http_response_code(),
             'Message' => "Welcome to API",

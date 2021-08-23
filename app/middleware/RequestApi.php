@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * REQUEST API MIDDLEWARE
+ * the filtering the request that from API
+ * @category Class
+ * @package  App/Middleware
+ * @author   Marry Go Round <million8.me@gmail.com>
+ * @license  https://opensource.org/licenses/MIT - MIT License 
+ * @link     https://github.com/ZheeknoDev/aspra
+ */
+
 namespace App\Middleware;
 
 use App\Core\Middlewares\InterfaceMiddleware;

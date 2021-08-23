@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @category Class
+ * @package  App/Core/Router
+ * @author   Marry Go Round <million8.me@gmail.com>
+ * @license  https://opensource.org/licenses/MIT - MIT License 
+ * @link     https://github.com/ZheeknoDev/aspra
+ */
+
 namespace App\Core\Router;
 
 final class Response
@@ -52,6 +60,11 @@ final class Response
     public function __construct(Request $request = null)
     {
         $this->request = $request;
+    }
+
+    final public function __debugInfo()
+    {
+        return;
     }
 
     public static function instance()

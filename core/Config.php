@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @category Class
+ * @package  App/Config
+ * @author   Marry Go Round <million8.me@gmail.com>
+ * @license  https://opensource.org/licenses/MIT - MIT License 
+ * @link     https://github.com/ZheeknoDev/aspra
+ */
+
 namespace App\Core;
 
 class Config
@@ -29,5 +37,10 @@ class Config
     public function __get($name)
     {
         return (object) $this->instance[$name];
+    }
+
+    final public function __debugInfo()
+    {
+        return;
     }
 }

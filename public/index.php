@@ -1,6 +1,14 @@
 <?php
 
 /**
+ * @category File
+ * @package  Index of Package
+ * @author   Marry Go Round <million8.me@gmail.com>
+ * @license  https://opensource.org/licenses/MIT - MIT License 
+ * @link     https://github.com/ZheeknoDev/aspra
+ * 
+ * 
+ * 
  * Welcome to A Simple PHP RESTFul API or ASPRA.
  * 
  * Test to make sure that ASPRA is running on PHP 7.0 or newer. Once you are

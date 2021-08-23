@@ -1,10 +1,17 @@
 <?php
 
+/**
+ * @category Class
+ * @package  App/Core/Router
+ * @author   Marry Go Round <million8.me@gmail.com>
+ * @license  https://opensource.org/licenses/MIT - MIT License 
+ * @link     https://github.com/ZheeknoDev/aspra
+ */
+
 namespace App\Core\Router;
 
 use \App\Core\Router\Request;
 use \App\Core\Router\Response;
-use Rakit\Validation\Validator;
 use Exception;
 
 final class Router
@@ -23,6 +30,11 @@ final class Router
     {
         $this->request = $request;
         $this->response = $response;
+    }
+
+    final public function __debugInfo()
+    {
+        return;
     }
 
     /**
