@@ -1,2 +1,2 @@
-# aspra
-A Simple PHP RESTful API of ASPRA
+# ASPRA
+A Simple PHP RESTful API (ASPRA)
