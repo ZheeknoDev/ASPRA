@@ -3,11 +3,9 @@
     "description": "A Simple PHP RESTful API, It's a case study and practice for the beginner or mediumly PHP developer.",
     "type": "project",
     "require": {
-        "filp/whoops": "^2.13",
-        "rakit/validation": "^1.4"
+        "php": ">=5.3.0"
     },
     "require-dev": {
-        "symfony/var-dumper": "^5.3"
     },
     "license": "MIT",
     "authors": [
