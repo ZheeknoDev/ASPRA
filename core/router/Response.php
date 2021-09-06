@@ -80,7 +80,9 @@ final class Response
     final public function json($object, int $http_response_code = 200)
     {
         // remove any string that could create an invalid JSON 
-        ob_clean();
+        if (ob_get_length() > 0) {
+            ob_clean();
+        }
         // this will clean up any previously added headers, to start clean
         header_remove();
         // Set the content type to JSON and charset 

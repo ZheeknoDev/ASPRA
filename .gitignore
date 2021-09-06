@@ -1,4 +1,4 @@
-/config/private.key
+/config/*
 /sql
 /sql/*
 /vendor
