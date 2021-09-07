@@ -3,7 +3,7 @@
 /**
  * @category Class
  * @package  App/Core/Controller
- * @author   Marry Go Round <million8.me@gmail.com>
+ * @author   ZheeknoDev <million8.me@gmail.com>
  * @license  https://opensource.org/licenses/MIT - MIT License 
  * @link     https://github.com/ZheeknoDev/aspra
  */

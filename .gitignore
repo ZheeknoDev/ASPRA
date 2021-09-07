@@ -1,6 +1,2 @@
-/config/*
-/sql
-/sql/*
 /vendor
 /vendor/*
-composer.lock

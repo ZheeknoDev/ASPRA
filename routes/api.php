@@ -3,7 +3,7 @@
 /**
  * @category File
  * @package  Routes
- * @author   Marry Go Round <million8.me@gmail.com>
+ * @author   ZheeknoDev <million8.me@gmail.com>
  * @license  https://opensource.org/licenses/MIT - MIT License 
  * @link     https://github.com/ZheeknoDev/aspra
  */
