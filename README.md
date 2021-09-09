@@ -2,7 +2,7 @@
 A simple PHP micro-framework for build RESTful API service.
 
 # Feature
-- Simply, easy to the learning curve.
+- Simply, easy to understanding.
 - PHP OOP (Object-oriented programming)
 - PHP MVC pattern design
 - RESTFul API.
