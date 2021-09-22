@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b822b391801aadeb63d589cf159a72af",
+    "content-hash": "fb629b1a64a3d64ad9dd988137f1911a",
     "packages": [
         {
             "name": "filp/whoops",
-            "version": "2.14.0",
+            "version": "2.14.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "fdf92f03e150ed84d5967a833ae93abffac0315b"
+                "reference": "89584ce67dd32307f1063cc43846674f4679feda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/fdf92f03e150ed84d5967a833ae93abffac0315b",
-                "reference": "fdf92f03e150ed84d5967a833ae93abffac0315b",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/89584ce67dd32307f1063cc43846674f4679feda",
+                "reference": "89584ce67dd32307f1063cc43846674f4679feda",
                 "shasum": ""
             },
             "require": {
@@ -67,7 +67,7 @@
             ],
             "support": {
                 "issues": "https://github.com/filp/whoops/issues",
-                "source": "https://github.com/filp/whoops/tree/2.14.0"
+                "source": "https://github.com/filp/whoops/tree/2.14.3"
             },
             "funding": [
                 {
@@ -75,7 +75,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-07-13T12:00:00+00:00"
+            "time": "2021-09-19T12:00:00+00:00"
         },
         {
             "name": "psr/log",
@@ -338,16 +338,16 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v5.3.6",
+            "version": "v5.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "3dd8ddd1e260e58ecc61bb78da3b6584b3bfcba0"
+                "reference": "3ad5af4aed07d0a0201bbcfc42658fe6c5b2fb8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/3dd8ddd1e260e58ecc61bb78da3b6584b3bfcba0",
-                "reference": "3dd8ddd1e260e58ecc61bb78da3b6584b3bfcba0",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/3ad5af4aed07d0a0201bbcfc42658fe6c5b2fb8f",
+                "reference": "3ad5af4aed07d0a0201bbcfc42658fe6c5b2fb8f",
                 "shasum": ""
             },
             "require": {
@@ -406,7 +406,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v5.3.6"
+                "source": "https://github.com/symfony/var-dumper/tree/v5.3.7"
             },
             "funding": [
                 {
@@ -422,7 +422,104 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-07-27T01:56:02+00:00"
+            "time": "2021-08-04T23:19:25+00:00"
+        },
+        {
+            "name": "zheeknodev/roam",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ZheeknoDev/roam.git",
+                "reference": "daf648022875d9807d3f3e0f2b2049abc5edfb00"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ZheeknoDev/roam/zipball/daf648022875d9807d3f3e0f2b2049abc5edfb00",
+                "reference": "daf648022875d9807d3f3e0f2b2049abc5edfb00",
+                "shasum": ""
+            },
+            "require-dev": {
+                "zheeknodev/sipher": "1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zheeknodev\\Roam\\": "src/",
+                    "Zheeknodev\\Roam\\Router\\": "src/Router/",
+                    "Zheeknodev\\Roam\\Middleware\\": "src/Middleware/",
+                    "Zheeknodev\\Roam\\Middleware\\Api\\": "src/Middleware/Api/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "ZheeknoDev",
+                    "email": "million8.me@gmail.com"
+                }
+            ],
+            "description": "A simple PHP Routing, Authenticate and Middleware.",
+            "support": {
+                "issues": "https://github.com/ZheeknoDev/roam/issues",
+                "source": "https://github.com/ZheeknoDev/roam/tree/1.0"
+            },
+            "time": "2021-09-22T08:29:21+00:00"
+        },
+        {
+            "name": "zheeknodev/sipher",
+            "version": "1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ZheeknoDev/Sipher.git",
+                "reference": "2b6f31df31b0a045f15747227b2e0b5fbb61b797"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ZheeknoDev/Sipher/zipball/2b6f31df31b0a045f15747227b2e0b5fbb61b797",
+                "reference": "2b6f31df31b0a045f15747227b2e0b5fbb61b797",
+                "shasum": ""
+            },
+            "require": {
+                "php": "7.x"
+            },
+            "require-dev": {
+                "php": "7.x"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zheeknodev\\Sipher\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "ZheeknoDev",
+                    "email": "million8.me@gmail.com"
+                }
+            ],
+            "description": "A simple PHP encryption library",
+            "homepage": "https://github.com/ZheeknoDev/Sipher",
+            "keywords": [
+                "cipher",
+                "encrypt",
+                "encryption",
+                "hash",
+                "openssl",
+                "password",
+                "php",
+                "token"
+            ],
+            "support": {
+                "issues": "https://github.com/ZheeknoDev/Sipher/issues",
+                "source": "https://github.com/ZheeknoDev/Sipher/tree/1.1"
+            },
+            "time": "2021-09-21T16:17:50+00:00"
         }
     ],
     "packages-dev": [],

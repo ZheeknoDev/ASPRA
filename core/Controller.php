@@ -10,6 +10,8 @@
 
 namespace App\Core;
 
+use Zheeknodev\Roam\Router\Response;
+
 class Controller
 {
     private $app;
@@ -22,9 +24,9 @@ class Controller
     final public function __construct()
     {
         $this->app = new \App\Core\Application;
-        $this->request = $this->app->router->request;
-        $this->response =  new $this->app->router->response($this->request);
-        $this->middleware = $this->app->middleware;
+        $this->request = $this->app->router()->request();
+        $this->response =  new Response($this->request);
+        $this->middleware = $this->app->middleware();
         $this->validator = new \Rakit\Validation\Validator;
         $this->before();
     }

@@ -48,14 +48,9 @@ $app = new App\Core\Application();
  * You can register owned the middlewares here.
  * @example ['alias of middleware' => 'path of middlware']
  */
-$app->middleware->register([
-    'api' => \App\Middleware\RequestApi::class,
-    'auth' => \App\Middleware\Authenticate::class,
-]);
+$app->set_middleware(array());
 # Register the routes
-$app->router->namespace([
-    'namespace' => 'App\Controllers'
-], function ($router) {
+$app->set_route(function ($router) {
     require_once(BASEPATH . '/routes/api' . EXT);
 });
 # Run Application

@@ -16,6 +16,6 @@ abstract class DB
     {
         $app = new \App\Core\Application;
         $method = strtolower($name);
-        return call_user_func_array([$app->database, $method], $arguments);
+        return call_user_func_array([$app->database(), $method], $arguments);
     }
 }

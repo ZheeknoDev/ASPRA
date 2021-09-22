@@ -8,6 +8,10 @@
  * @link     https://github.com/ZheeknoDev/aspra
  */
 
+
+use Zheeknodev\Roam\Router\Response;
+use Zheeknodev\Sipher\Sipher;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,16 +20,18 @@
 */
 
 # wellcome
-$router->get('/', function () use ($router) {
-    return $router->response->json([
+$router->get('/', function () {
+    return Response::instance()->json([
         'StatusCode' => http_response_code(),
         'Application' => \App\Core\Config::App('app_name'),
         'Version' => \App\Core\Config::App('app_version'),
         'Message' => "Welcome to the ASPRA",
         'Response' => true,
+        'Sipher' => Sipher::randomString(64)
     ]);
 });
 
+/*
 $router->group(['prefix' => '/api/v1/auth/users', 'middleware' => ['api']], function () use ($router) {
     # user register to get a new token
     $router->post('/register', 'AuthController:userRegister');
@@ -43,3 +49,4 @@ $router->group(['prefix' => '/api/v1', 'middleware' => ['api','auth']], function
         ]);
     });
 });
+*/

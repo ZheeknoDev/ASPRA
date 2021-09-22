@@ -10,22 +10,35 @@
 
 namespace App\Core;
 
-use App\Core\Router\Request;
 use PDO;
+use Zheeknodev\Roam\Router;
+use Zheeknodev\Roam\Router\Request;
 
 final class Application
 {
-    public $database;
-    public $middleware;
-    public $router;
+    private $database;
+    private $middleware;
+    private $router;
 
     final public function __construct()
     {
         $this->set_timezone();
-        $this->set_debug_mode(new \App\Core\Router\Request);
+        $this->set_debug_mode(new Request);
         $this->set_connect_database();
-        $this->router = new \App\Core\Router\Router(new \App\Core\Router\Request, new \App\Core\Router\Response);
-        $this->middleware = $this->router->middleware = new \App\Core\Middlewares\Middleware($this->router->request);
+        $this->router = new Router;
+        $this->middleware = $this->router->middleware;
+    }
+
+    final public function __call($method, $arguments)
+    {
+        $name = strtolower($method);
+        $class_methods = get_class_methods($this);
+        $class_variables = array_keys(get_class_vars(get_class($this)));
+        $cond_1 = !in_array($name, $class_methods);
+        $cond_2 = in_array($name, $class_variables);
+        if($cond_1 && $cond_2) {
+            return $this->{$name};
+        }
     }
 
     final public function __destruct()
@@ -86,13 +99,23 @@ final class Application
              * @author Filipe Dobreira
              */
             $phpException = new \Whoops\Run;
-            if ($request->requestApi()) {
+            if ($request->viaRequest('/', 'application/json')) {
                 $phpException->pushHandler(new \Whoops\Handler\JsonResponseHandler);
             } else {
                 $phpException->pushHandler(new \Whoops\Handler\PrettyPageHandler);
             }
             $phpException->register();
         }
+    }
+
+    final public function set_middleware(array $middleware)
+    {
+        return $this->middleware->register($middleware);
+    }
+
+    final public function set_route(callable $routes)
+    {
+        return call_user_func($routes, $this->router);
     }
 
     /**

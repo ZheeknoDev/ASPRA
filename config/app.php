@@ -23,7 +23,7 @@ return [
      * ==============================================
      */
     'APP_NAME' => 'ASPRA',
-    'APP_VERSION' => '1.0.1',
+    'APP_VERSION' => '1.2',
 
     /**
      * If the application is the production service, 
