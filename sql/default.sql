@@ -16,7 +16,7 @@ CREATE TABLE `client_tokens` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `group` varchar(191) NOT NULL DEFAULT ' ',
   `somewords` varchar(255) NOT NULL DEFAULT '',
-  `revoked` tinyint(3) NOT NULL,
+  `revoked` int(11) NULL DEFAULT 0,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`)
@@ -34,7 +34,7 @@ CREATE TABLE `user_tokens` (
   `token` varchar(255) NOT NULL DEFAULT '',
   `user_id` int(11) unsigned NOT NULL,
   `client_id` int(11) unsigned NOT NULL,
-  `revoked` tinyint(3) NOT NULL DEFAULT 0,
+  `revoked` int(11) NULL DEFAULT 0,
   `expire_at` datetime NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),

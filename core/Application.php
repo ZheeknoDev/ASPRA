@@ -2,29 +2,33 @@
 
 /**
  * @category Class
- * @package  App/Core/
+ * @package  zheeknodev/aspra
  * @author   ZheeknoDev <million8.me@gmail.com>
  * @license  https://opensource.org/licenses/MIT - MIT License 
- * @link     https://github.com/ZheeknoDev/aspra
+ * @link     https://github.com/ZheeknoDev/Aspra
  */
 
 namespace App\Core;
 
-use PDO;
-use Zheeknodev\Roam\Router;
-use Zheeknodev\Roam\Router\Request;
+use App\Core\Database\PtcDb;
+use Zheeknodev\Roma\Router;
+use Zheeknodev\Roma\Router\Request;
 
 final class Application
 {
-    private $database;
+    private $authorization;
+    private $queryBuilder;
     private $middleware;
     private $router;
+
+    public static $_queryBuilder;
 
     final public function __construct()
     {
         $this->set_timezone();
         $this->set_debug_mode(new Request);
         $this->set_connect_database();
+        $this->set_authorization();
         $this->router = new Router;
         $this->middleware = $this->router->middleware;
     }
@@ -36,7 +40,7 @@ final class Application
         $class_variables = array_keys(get_class_vars(get_class($this)));
         $cond_1 = !in_array($name, $class_methods);
         $cond_2 = in_array($name, $class_variables);
-        if($cond_1 && $cond_2) {
+        if ($cond_1 && $cond_2) {
             return $this->{$name};
         }
     }
@@ -61,25 +65,43 @@ final class Application
     }
 
     /**
+     * Setup default authorization
+     * @return void
+     */
+    private function set_authorization()
+    {
+        # set default authorization
+        $this->authorization = [
+            'origin_key' => base64_decode(Config::App('app_key')),
+            'groups' => array()
+        ];
+        # get client's group
+        $clientTokens = $this->queryBuilder->table('client_tokens')
+            ->select(['group', 'somewords'])
+            ->run();
+
+        if (count($clientTokens) > 0) {
+            foreach ($clientTokens as $client) {
+                $this->authorization['groups'][$client->group] = $client->somewords;
+            }
+        }
+    }
+
+    /**
      * Connedt the database
      * @return void
      */
     private function set_connect_database(): void
     {
-        $db = array_filter(Config::App('database'), function ($details) {
+        $data = array_filter(Config::App('database'), function ($details) {
             return ($details !== null);
         });
-        if (!empty($db)) {
-            $connection = $db['CONNECTION'];
-            $host = $db['HOST'];
-            $port = $db['PORT'];
-            $username = $db['USERNAME'];
-            $password = $db['PASSWORD'];
-            $database = $db['DATABASE'];
-            $charset = $db['CHARSET'];
-
-            $connect = "{$connection}:host={$host};dbname={$database};charset:{$charset}";
-            $this->database = new \App\Core\Database\Database(new PDO($connect, $username, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING)));
+        if (!empty($data)) {
+            # initializing a pdo object to run queries with the query builder
+            $pdo_connection = (string) "{$data['CONNECTION']}:host={$data['HOST']};dbname={$data['DATABASE']};charset:{$data['CHARSET']};";
+            $pdo = new \PDO($pdo_connection, $data['USERNAME'], $data['PASSWORD'], [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING, \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ]);
+            # initializing the query builder object with PDO support
+            self::$_queryBuilder = $this->queryBuilder = new \App\Core\Database\PtcQueryBuilder($pdo);
         }
     }
 

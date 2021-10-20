@@ -2,15 +2,15 @@
 
 /**
  * @category Class
- * @package  App/Core/Controller
+ * @package  zheeknodev/aspra
  * @author   ZheeknoDev <million8.me@gmail.com>
  * @license  https://opensource.org/licenses/MIT - MIT License 
- * @link     https://github.com/ZheeknoDev/aspra
+ * @link     https://github.com/ZheeknoDev/Aspra
  */
 
 namespace App\Core;
 
-use Zheeknodev\Roam\Router\Response;
+use Zheeknodev\Roma\Router\Response;
 
 class Controller
 {
@@ -51,6 +51,26 @@ class Controller
         return;
     }
 
+    final protected function invalid(object $validation)
+    {
+        # handling errors
+        $errors = $validation->errors();
+        $errorKeys = [];
+        foreach ($errors->firstOfAll() as $key => $value) {
+            $errorKeys[] = $key;
+        }
+
+        # return validation errors
+        $listOfInputFields = implode(', ', $errorKeys);
+        $message = "The input field ({$listOfInputFields}) " . (count($errorKeys) > 1 ? 'are' : 'is') . " required";
+        $this->response->returnJsonPattern->status = false;
+        $this->response->returnJsonPattern->response = [
+            'warning' => $message,
+        ];
+        $response = $this->response->returnJsonPattern;
+        return $this->response->json($response, 400);
+    }
+
     /**
      * Call the middlewares before execute the controller class
      * @param array $middleware - list of middlewares
@@ -65,13 +85,10 @@ class Controller
         }
     }
 
-    /**
-     * Random the string
-     * @param int $length 
-     * @return string
-     */
-    final protected function random_string(int $length = 32) : string
+    final protected function json(bool $status, array $response, int $httpResponseCode = 200)
     {
-        return (string) base64_encode(openssl_random_pseudo_bytes($length));
+        $this->response->returnJsonPattern->status = $status;
+        $this->response->returnJsonPattern->response = $response;
+        return $this->response->json($this->response->returnJsonPattern, $httpResponseCode);
     }
 }

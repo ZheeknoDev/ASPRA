@@ -2,10 +2,10 @@
 
 /**
  * @category File
- * @package  Index of Package
+ * @package  zheeknodev/aspra
  * @author   ZheeknoDev <million8.me@gmail.com>
  * @license  https://opensource.org/licenses/MIT - MIT License 
- * @link     https://github.com/ZheeknoDev/aspra
+ * @link     https://github.com/ZheeknoDev/Aspra
  * 
  * 
  * 
@@ -33,10 +33,10 @@ define('BASEPATH', dirname(__DIR__));
 define('EXT', '.php');
 
 # Autoload
-require(__DIR__ . '/../vendor/autoload.php');
+require_once(__DIR__ . '/../vendor/autoload.php');
 
 # session
-session_start();
+//session_start();
 
 # Start Application
 $app = new App\Core\Application();
@@ -48,7 +48,9 @@ $app = new App\Core\Application();
  * You can register owned the middlewares here.
  * @example ['alias of middleware' => 'path of middlware']
  */
-$app->set_middleware(array());
+$app->set_middleware([
+    'api' => \Zheeknodev\Roma\Middleware\Api\RequestWithApi::class
+]);
 # Register the routes
 $app->set_route(function ($router) {
     require_once(BASEPATH . '/routes/api' . EXT);

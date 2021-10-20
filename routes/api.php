@@ -2,14 +2,14 @@
 
 /**
  * @category File
- * @package  Routes
+ * @package  zheeknodev/aspra
  * @author   ZheeknoDev <million8.me@gmail.com>
  * @license  https://opensource.org/licenses/MIT - MIT License 
- * @link     https://github.com/ZheeknoDev/aspra
+ * @link     https://github.com/ZheeknoDev/Aspra
  */
 
 
-use Zheeknodev\Roam\Router\Response;
+use Zheeknodev\Roma\Router\Response;
 use Zheeknodev\Sipher\Sipher;
 
 /*
@@ -30,6 +30,13 @@ $router->get('/', function () {
         'Sipher' => Sipher::randomString(64)
     ]);
 });
+
+$router->group(['prefix' => '/api/v1', 'middleware' => ['api']], function() use ($router) {
+    $router->post('/user/register', 'App\Controller\UserController:postUserRegister');
+    $router->post('/user/renew-token', 'App\Controller\UserController:postUserRenewToken');
+});
+
+
 
 /*
 $router->group(['prefix' => '/api/v1/auth/users', 'middleware' => ['api']], function () use ($router) {

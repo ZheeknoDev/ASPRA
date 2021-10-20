@@ -2,10 +2,10 @@
 
 /**
  * @category Class
- * @package  App/Config
+ * @package  zheeknodev/aspra
  * @author   ZheeknoDev <million8.me@gmail.com>
  * @license  https://opensource.org/licenses/MIT - MIT License 
- * @link     https://github.com/ZheeknoDev/aspra
+ * @link     https://github.com/ZheeknoDev/Aspra
  */
 
 namespace App\Core;

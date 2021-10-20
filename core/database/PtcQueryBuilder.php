@@ -1,9 +1,5 @@
 <?php
 
-namespace App\Core\Database;
-
-use Closure;
-
 /**
  * PHP TOOLCASE QUERY BUILDER CLASS
  * PHP version 5.3
@@ -14,7 +10,11 @@ use Closure;
  * @link     http://phptoolcase.com
  */
 
-class Database
+namespace App\Core\Database;
+
+use Closure;
+
+class PtcQueryBuilder
 {
 	/**
 	 * Adds the pdo instance to the query builder object. See @ref qb_getting_started
@@ -652,6 +652,7 @@ class Database
 				 * Return array which a key as string
 				 */
 				foreach ($result as $key => $array) {
+					$array = (array) $array;
 					$result[$key] = (object) array_filter($array, function ($key) {
 						return (!is_numeric($key) === true);
 					}, ARRAY_FILTER_USE_KEY);
