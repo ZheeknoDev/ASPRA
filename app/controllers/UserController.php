@@ -143,7 +143,7 @@ class UserController extends Controller
         # get new token
         $userToken = Auth::getUserApiToken($userId);
         $status = $userToken->status;
-        $httpResponseCode = ($status) ? 200 : 400;
+        $httpResponseCode = ($status) ? 200 : 500;
         unset($userToken->status);
         return $this->json($status, (array) $userToken, $httpResponseCode);
     }

@@ -37,23 +37,13 @@ $router->group(['prefix' => '/api/v1', 'middleware' => ['api']], function() use 
 });
 
 
-
-/*
-$router->group(['prefix' => '/api/v1/auth/users', 'middleware' => ['api']], function () use ($router) {
-    # user register to get a new token
-    $router->post('/register', 'AuthController:userRegister');
-    # user logged in to renew a token
-    $router->post('/get-token', 'AuthController:userGetToken');
-});
-
 $router->group(['prefix' => '/api/v1', 'middleware' => ['api','auth']], function () use ($router) {
     # example for testing passing request through the middlewares
-    $router->get('/example', function () use ($router) {
-        return $router->response->json([
+    $router->get('/user/example-auth', function () use ($router) {
+        return Response::instance()->json([
             'StatusCode' => http_response_code(),
             'Message' => "Welcome to API",
             'Response' => true,
         ]);
     });
 });
-*/

@@ -12,24 +12,30 @@ namespace App\Core;
 
 use App\Core\Database\DB;
 use App\Model\Token;
+use App\Model\User;
+use DateTime;
 use Zheeknodev\Roma\BasicAuth;
 use Zheeknodev\Roma\Router\Response;
 
 final class Auth
 {
+    private const SAPARATOR = '$';
+    private static $_request;
+
     public function __construct()
     {
         $app = new Application();
         BasicAuth::setup($app->authorization());
+        self::$_request = $app->router()->request();
     }
 
     final public static function check_password(string $password, string $password_hash): bool
     {
         new self();
-        return BasicAuth::via()->get_password_verify($password, $password_hash);
+        return BasicAuth::sipher()->get_password_verify($password, $password_hash);
     }
 
-    private static function client_token(string $group): object
+    private static function getClientToken(string $group): object
     {
         $clientToken = DB::table('client_tokens')
             ->where('group', '=', strtolower($group))
@@ -37,39 +43,41 @@ final class Auth
         return (!empty($clientToken->id) ? $clientToken : false);
     }
 
-    final public static function getUserApiToken(int $user_id, int $expire_days = null, string $group = null)
+    final public static function getUserApiToken(int $user_id, int $expire_days = null, string $group = null): object
     {
         new self();
-        $expire_days = (string) "+" . (!empty($expire_days) ? $expire_days : 30) . " days";
-        $expire_at = date('Y-m-d H:i:s', strtotime($expire_days));
+        $string_date = (string) "+" . (!empty($expire_days) ? $expire_days : 30) . " days";
+        $expire_days = date('Y-m-d H:i:s', strtotime($string_date));
         $group = (!empty($group) ? strtolower($group) : 'users');
-        $clientToken = self::client_token($group);
+        $clientToken = self::getClientToken($group);
         $result = BasicAuth::instance()->getApiToken($group);
+        $user = User::where('id', '=', $user_id)->first();
         $userToken = Token::where('user_id', '=', $user_id)->first();
 
-        if ($clientToken !== false && $result !== false) {
+        if ($clientToken !== false && $result !== false && !empty($user->id)) {
             # expire date
             $data = array();
-            $data['expire_at'] = $expire_at;
+            $expire_at = $data['expire_at'] = $expire_days;
             $data['token'] = $result->check_hash;
             if (!empty($userToken->id)) {
                 # update user's token
                 $revoked = $userToken->revoked;
                 $data['revoked'] = ($revoked > 0) ? ($revoked + 1) : 1;
-                $update = Token::where('user_id', '=', $user_id)
+                $update = Token::where('user_id', '=', $user->id)
                     ->update($data)
                     ->run();
                 # update revoke token
-                self::revoke_token($group);
+                self::updateRovokedToken($group);
             } else {
                 # create user's token
-                $date['user_id'] = $user_id;
+                $date['user_id'] = $user->id;
                 $data['client_at'] = $clientToken->id;
                 Token::insert($data)->run();
             }
+
             return (object) [
                 'status' => true,
-                'token' => $result->token,
+                'token' => base64_encode(implode(self::SAPARATOR, [$result->token, bin2hex($user->remember)])),
                 'expire_at' => $expire_at
             ];
         }
@@ -80,16 +88,69 @@ final class Auth
         ];
     }
 
+    final public static function hasAuthorized(string $typeOfAuth): bool
+    {
+        # closure - validate token's expire date
+        $hasExpired = function (string $expire) {
+            $expire_at = new DateTime($expire);
+            $today = new DateTime('now');
+            $remain = $today->diff($expire_at);
+            return ($remain->days == 0) ? true : false;
+        };
+
+        new self();
+        $request = self::$_request;
+        $hasAuthorization = $request->hasAuthorized($typeOfAuth);
+        $token = $request->getAuthorizedToken();
+        if ($hasAuthorization && !empty($token)) {
+            $token = base64_decode($token);
+            $token = explode(self::SAPARATOR, $token);
+            if (count($token) == 2) {
+                $user = User::where('remember', '=', hex2bin($token[1]))->first();
+                if (!empty($user->id)) {
+                    $userToken = Token::where('user_id', '=', $user->id)->first();
+                    if (!empty($userToken->id) && !empty($userToken->token)) {
+
+                        # when the token is expire
+                        if ($hasExpired($userToken->expire_at)) {
+                            $code = 401;
+                            $response = Response::instance();
+                            $response->returnJsonPattern->status = false;
+                            $response->returnJsonPattern->response = [
+                                'message' => $response->getResponseMessage($code) . ", Your token ware expired, please renew your token."
+                            ];
+                            return $response->json($response->returnJsonPattern, $code);
+                        }
+
+                        $clientToken = DB::table('client_tokens')->run();
+                        foreach ($clientToken as $client) {
+                            $data = [
+                                'authorized' => $typeOfAuth,
+                                'group' => $client->group,
+                                'token' => $token[0],
+                                'check_hash' => $userToken->token
+                            ];
+                            $verifyToken = BasicAuth::instance()->verifyApiToken($data);
+                            if ($verifyToken) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     final public static function hash_password(string $password): string
     {
         new self();
-        return BasicAuth::via()->get_password_hash($password);
+        return BasicAuth::sipher()->get_password_hash($password);
     }
 
-
-    private static function revoke_token(string $group): void
+    private static function updateRovokedToken(string $group): void
     {
-        $clientToken = self::client_token($group);
+        $clientToken = self::getClientToken($group);
         if ($clientToken !== false) {
             $revoked = ($clientToken->revoked + 1);
             try {

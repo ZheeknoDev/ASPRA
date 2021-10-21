@@ -49,7 +49,8 @@ $app = new App\Core\Application();
  * @example ['alias of middleware' => 'path of middlware']
  */
 $app->set_middleware([
-    'api' => \Zheeknodev\Roma\Middleware\Api\RequestWithApi::class
+    'api' => \Zheeknodev\Roma\Middleware\Api\RequestWithApi::class,
+    'auth' => \App\Middleware\RequestWithAuth::class
 ]);
 # Register the routes
 $app->set_route(function ($router) {
