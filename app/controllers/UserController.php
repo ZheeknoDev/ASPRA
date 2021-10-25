@@ -18,6 +18,75 @@ use Zheeknodev\Sipher\Sipher;
 
 class UserController extends Controller
 {
+    public function getUserProfile()
+    {
+        $userInfo = Auth::getUserInfo();
+        $status = !empty($userInfo) ? true : false;
+        $httpResponseCode = ($status) ? 200 : 400;
+        return $this->json($status, (array) $userInfo, $httpResponseCode);
+    }
+
+    public function postUpdateUserProfile()
+    {
+        $input = $this->request->body();
+        $validation = $this->validator->validate((array) $input, [
+            'firstname' => 'nullable|alpha',
+            'lastname' => 'nullable|alpha',
+            'email' => 'nullable|email'
+        ]);
+
+        # validation is failed
+        if ($validation->fails()) {
+            $this->invalid($validation);
+        }
+
+        # get user's info
+        $userInfo = Auth::getUserInfo();
+        if (empty($userInfo)) {
+            # error response message
+            $errorRespone['warning'] = 'Unable to update the profile';
+            return $this->json(false, $errorRespone, 401);
+        }
+
+        $info = array();
+        # firstname
+        if (!empty($input->firstname)) {
+            $info['firstname'] = $input->firstname;
+        }
+        # lastname
+        if (!empty($input->lastname)) {
+            $info['lastname'] = $input->lastname;
+        }
+        # email
+        if (!empty($input->email)) {
+            $hasExistsEmail = User::where('email', '=', $input->email)
+                ->where('id', '!=', $userInfo->id)
+                ->run();
+            if (count($hasExistsEmail) > 0) {
+                # error response message
+                $errorRespone['warning'] = "Unable to update, {$input->email} has already been registered";
+                return $this->json(false, $errorRespone, 401);
+            } else {
+                $info['email'] = $input->email;
+            }
+        }
+        # update user's profile
+        if (count($info) > 0) {
+            try {
+                $update = User::where('id', '=', $userInfo->id)
+                    ->update($info)
+                    ->run();
+                $status = ($update) ? true : false;
+                $resposne['message'] = ($status) ? 'The profile has updated success' : 'Something went wrong, unable to update the profile';
+                $httpResponseCode = ($status) ? 200 : 401;
+                return $this->json($status, $resposne, $httpResponseCode);
+            } catch (\Exception $e) {
+                # log
+                die($e->getMessage());
+            }
+        }
+    }
+
     public function postUserRenewToken()
     {
         $input = $this->request->body();

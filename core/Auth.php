@@ -21,11 +21,12 @@ final class Auth
 {
     private const SAPARATOR = '$';
     private static $_request;
+    private static $_userInfo;
 
     public function __construct()
     {
         $app = new Application();
-        BasicAuth::setup($app->authorization());
+        BasicAuth::setup($app->credentials());
         self::$_request = $app->router()->request();
     }
 
@@ -33,6 +34,16 @@ final class Auth
     {
         new self();
         return BasicAuth::sipher()->get_password_verify($password, $password_hash);
+    }
+
+    final public static function getUserInfo() //: object
+    {
+        if(!empty(self::$_userInfo)) {
+            $userInfo = self::$_userInfo;
+            unset($userInfo->password, $userInfo->remember, $userInfo->created_at, $userInfo->updated_at, $userInfo->verified_at);
+            return $userInfo;
+        }
+        return null;
     }
 
     private static function getClientToken(string $group): object
@@ -100,9 +111,9 @@ final class Auth
 
         new self();
         $request = self::$_request;
-        $hasAuthorization = $request->hasAuthorized($typeOfAuth);
+        $hasAuthorized = $request->hasAuthorized($typeOfAuth);
         $token = $request->getAuthorizedToken();
-        if ($hasAuthorization && !empty($token)) {
+        if ($hasAuthorized && !empty($token)) {
             $token = base64_decode($token);
             $token = explode(self::SAPARATOR, $token);
             if (count($token) == 2) {
@@ -130,8 +141,12 @@ final class Auth
                                 'token' => $token[0],
                                 'check_hash' => $userToken->token
                             ];
-                            $verifyToken = BasicAuth::instance()->verifyApiToken($data);
-                            if ($verifyToken) {
+                            # if verify success
+                            $verifyApiToken = BasicAuth::instance()->verifyApiToken($data);
+                            if($verifyApiToken) {
+                                # user's authorization information
+                                $user->group = $client->group;
+                                self::$_userInfo = $user;
                                 return true;
                             }
                         }

@@ -31,19 +31,26 @@ $router->get('/', function () {
     ]);
 });
 
-$router->group(['prefix' => '/api/v1', 'middleware' => ['api']], function() use ($router) {
-    $router->post('/user/register', 'App\Controller\UserController:postUserRegister');
-    $router->post('/user/renew-token', 'App\Controller\UserController:postUserRenewToken');
-});
-
-
-$router->group(['prefix' => '/api/v1', 'middleware' => ['api','auth']], function () use ($router) {
-    # example for testing passing request through the middlewares
-    $router->get('/user/example-auth', function () use ($router) {
-        return Response::instance()->json([
-            'StatusCode' => http_response_code(),
-            'Message' => "Welcome to API",
-            'Response' => true,
-        ]);
+$router->group(['prefix' => '/api', 'middleware' => ['api']], function () use ($router) {
+    $router->group(['prefix' => '/v1'], function () use ($router) {
+        # register users
+        $router->post('/user/register', 'App\Controller\UserController:postUserRegister');
+        # renew user's token
+        $router->post('/user/renew-token', 'App\Controller\UserController:postUserRenewToken');
+        # group user
+        $router->group(['prefix' => '/user', 'middleware' => ['auth']], function () use ($router) {
+            # get user profile
+            $router->get('/profile', 'App\Controller\UserController:getUserProfile');
+            # update user profile
+            $router->post('/update-profile', 'App\Controller\UserController:postUpdateUserProfile');
+            # example for testing passing request through the middlewares
+            $router->get('/example-auth', function () {
+                return Response::instance()->json([
+                    'StatusCode' => http_response_code(),
+                    'Message' => "Welcome to API",
+                    'Response' => true,
+                ]);
+            });
+        });
     });
 });

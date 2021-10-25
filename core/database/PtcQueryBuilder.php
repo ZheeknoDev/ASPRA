@@ -258,8 +258,10 @@ class PtcQueryBuilder
 			return null;
 		}
 		if ($column) {
-			if (array_key_exists($column, (array) $result)) {
-				return $result[$column];
+			$result = (array) $result;
+			if (array_key_exists($column, $result)) {
+				return (object) $result;
+				//return $result[$column];
 			}
 			trigger_error('Could not find column "' . $column . '"!', E_USER_WARNING);
 			return null;

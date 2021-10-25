@@ -16,7 +16,7 @@ use Zheeknodev\Roma\Router\Request;
 
 final class Application
 {
-    private $authorization;
+    private $credentials;
     private $queryBuilder;
     private $middleware;
     private $router;
@@ -28,7 +28,7 @@ final class Application
         $this->set_timezone();
         $this->set_debug_mode(new Request);
         $this->set_connect_database();
-        $this->set_authorization();
+        $this->set_credentials();
         $this->router = new Router;
         $this->middleware = $this->router->middleware;
     }
@@ -65,13 +65,13 @@ final class Application
     }
 
     /**
-     * Setup default authorization
+     * Setup default credentials
      * @return void
      */
-    private function set_authorization()
+    private function set_credentials()
     {
-        # set default authorization
-        $this->authorization = [
+        # set default credentials
+        $this->credentials = [
             'origin_key' => base64_decode(Config::App('app_key')),
             'groups' => array()
         ];
@@ -82,7 +82,7 @@ final class Application
 
         if (count($clientTokens) > 0) {
             foreach ($clientTokens as $client) {
-                $this->authorization['groups'][$client->group] = $client->somewords;
+                $this->credentials['groups'][$client->group] = $client->somewords;
             }
         }
     }

@@ -482,16 +482,16 @@
     "packages-dev": [
         {
             "name": "zheeknodev/roma",
-            "version": "1.0.7",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ZheeknoDev/Roma.git",
-                "reference": "4218e1c150f5e16d16fb913e562c1a0ad281a173"
+                "reference": "fa0b65d12cb374d947ac148e0c9d4355ee26a61f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ZheeknoDev/Roma/zipball/4218e1c150f5e16d16fb913e562c1a0ad281a173",
-                "reference": "4218e1c150f5e16d16fb913e562c1a0ad281a173",
+                "url": "https://api.github.com/repos/ZheeknoDev/Roma/zipball/fa0b65d12cb374d947ac148e0c9d4355ee26a61f",
+                "reference": "fa0b65d12cb374d947ac148e0c9d4355ee26a61f",
                 "shasum": ""
             },
             "require-dev": {
@@ -520,9 +520,9 @@
             "description": "A simple PHP Routing, Authenticate and Middleware.",
             "support": {
                 "issues": "https://github.com/ZheeknoDev/Roma/issues",
-                "source": "https://github.com/ZheeknoDev/Roma/tree/1.0.7"
+                "source": "https://github.com/ZheeknoDev/Roma/tree/1.1.0"
             },
-            "time": "2021-10-21T02:18:30+00:00"
+            "time": "2021-10-25T09:38:29+00:00"
         }
     ],
     "aliases": [],
