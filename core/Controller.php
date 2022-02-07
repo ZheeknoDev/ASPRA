@@ -62,13 +62,9 @@ class Controller
 
         # return validation errors
         $listOfInputFields = implode(', ', $errorKeys);
-        $message = "The input field ({$listOfInputFields}) " . (count($errorKeys) > 1 ? 'are' : 'is') . " required";
-        $this->response->returnJsonPattern->status = false;
-        $this->response->returnJsonPattern->response = [
-            'warning' => $message,
-        ];
-        $response = $this->response->returnJsonPattern;
-        return $this->response->json($response, 400);
+        return $this->response->failBadRequest([
+            'warning' => "The input field ({$listOfInputFields}) " . (count($errorKeys) > 1 ? 'are' : 'is') . " required",
+        ]);
     }
 
     /**
@@ -83,12 +79,5 @@ class Controller
                 $this->middleware->call($name);
             }
         }
-    }
-
-    final protected function json(bool $status, array $response, int $httpResponseCode = 200)
-    {
-        $this->response->returnJsonPattern->status = $status;
-        $this->response->returnJsonPattern->response = $response;
-        return $this->response->json($this->response->returnJsonPattern, $httpResponseCode);
     }
 }

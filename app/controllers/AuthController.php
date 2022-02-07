@@ -12,18 +12,26 @@ namespace App\Controller;
 
 use App\Core\Auth;
 use App\Core\Controller;
-use App\Core\Database\DB;
 use App\Model\User;
 use Zheeknodev\Sipher\Sipher;
 
-class UserController extends Controller
+class AuthController extends Controller
 {
     public function getUserProfile()
     {
+        # get user data
         $userInfo = Auth::getUserInfo();
-        $status = !empty($userInfo) ? true : false;
-        $httpResponseCode = ($status) ? 200 : 400;
-        return $this->json($status, (array) $userInfo, $httpResponseCode);
+
+        # return user data
+        if (!empty($userInfo)) {
+            return $this->response->respond([
+                'status' => true,
+                'response' => (array) $userInfo,
+            ]);
+        }
+
+        # return not found user data
+        return $this->response->failNotFound(['error' => 'Unable to find the user information.']);
     }
 
     public function postUpdateUserProfile()
@@ -44,8 +52,7 @@ class UserController extends Controller
         $userInfo = Auth::getUserInfo();
         if (empty($userInfo)) {
             # error response message
-            $errorRespone['warning'] = 'Unable to update the profile';
-            return $this->json(false, $errorRespone, 401);
+            return $this->response->failNotFound(['error' => 'Unable to update the profile']);
         }
 
         $info = array();
@@ -64,25 +71,29 @@ class UserController extends Controller
                 ->run();
             if (count($hasExistsEmail) > 0) {
                 # error response message
-                $errorRespone['warning'] = "Unable to update, {$input->email} has already been registered";
-                return $this->json(false, $errorRespone, 401);
+                return $this->response->failUnauthorized(['error' => "Unable to update, {$input->email} has already been registered"]);
             } else {
                 $info['email'] = $input->email;
             }
         }
         # update user's profile
-        if (count($info) > 0) {
+        if (count($info) == 3) {
             try {
                 $update = User::where('id', '=', $userInfo->id)
                     ->update($info)
                     ->run();
-                $status = ($update) ? true : false;
-                $resposne['message'] = ($status) ? 'The profile has updated success' : 'Something went wrong, unable to update the profile';
-                $httpResponseCode = ($status) ? 200 : 401;
-                return $this->json($status, $resposne, $httpResponseCode);
+                $message = ($update) ? 'The profile has updated success' : 'Something went wrong, unable to update the profile';
+                if ($update) {
+                    return $this->response->respond([
+                        'status' => true,
+                        'response' => ['message' => $message],
+                    ]);
+                }
+                return $this->response->fail(['error' => $message], 500);
             } catch (\Exception $e) {
                 # log
-                die($e->getMessage());
+                # return error
+                return $this->response->fail(['error' => $e->getMessage()], $e->getCode());
             }
         }
     }
@@ -120,22 +131,30 @@ class UserController extends Controller
         $passwordIsCorrect = Auth::check_password($input->password, $user->password);
         if (empty($user->id) || !$passwordIsCorrect) {
             # error response message
-            $errorRespone['message'] = 'Unable to access, because your username, email, or password is incorrect';
-            return $this->json(false, $errorRespone, 401);
+            return $this->response->failUnauthorized(['error' => 'Unable to access, because your username, email, or password is incorrect']);
         } else {
             # whene the email or username is correct
-            $userId = $user->id;
-            $userToken = Auth::getUserApiToken($userId);
-            $status = $userToken->status;
-            $httpResponseCode = ($status) ? 200 : 401;
+            $userToken = Auth::getUserApiToken($user->id);
+
+            # if return status = false
+            if ($userToken->status === false) {
+                $errors = (!empty($userToken->errors) ? $userToken->errors : []);
+                return $this->response->fail(['error' => $errors], 500);
+            }
+
+            # return user data
             unset($userToken->status);
-            return $this->json($status, (array) $userToken, $httpResponseCode);
+            return $this->response->respond([
+                'status' => true,
+                'response' => (array) $userToken,
+            ]);
         }
     }
 
     /**
-     * User's register
-     * @return JSON
+     * postUserRegister
+     *
+     * @return void
      */
     public function postUserRegister()
     {
@@ -166,22 +185,17 @@ class UserController extends Controller
                 $listOfInputFields = implode(', ', $errorKeys);
                 $message = "The input field ({$listOfInputFields}) " . (count($errorKeys) > 1 ? 'are' : 'is') . " required";
             }
-            $errorResponse['warning'] = $message;
-            return $this->json(false, $errorResponse, 400);
+            return $this->response->failBadRequest(['error' => $message]);
         }
 
-        # has existed the username and email or not ?
-        $hasExistsEmail = User::where('email', '=', $input->email)->first();
-        $hasExistsUsername = User::where('username', '=', $input->username)->first();
+        # has duplicated the username and email or not ?
+        $getUserByEmail = User::where('email', '=', $input->email)->first();
+        $getUserByUsername = User::where('username', '=', $input->username)->first();
 
-        $existEmail = !empty($hasExistsEmail->id) ? true : false;
-        $existUsername = !empty($hasExistsUsername->id) ? true : false;
-
-        if ($existEmail || $existUsername) {
-            $inputField = ($existEmail) ? "email" : "username";
-            $message = "Your {$inputField} has already registered. You should be change to the another {$inputField}.";
-            $errorRespone['warning'] = $message;
-            return $this->json(false, $errorRespone, 401);
+        if (!empty($getUserByEmail->id) || !empty($getUserByUsername->id)) {
+            $field = (!empty($getUserByEmail->id)) ? "email" : "username";
+            $message = "Your {$field} has already registered. You should be change to the another {$field}.";
+            return $this->response->failBadRequest(['error' => $message], 400);
         }
 
         # register new users
@@ -197,7 +211,8 @@ class UserController extends Controller
             ])->run();
         } catch (\Exception $e) {
             # log
-            die($e->getMessage());
+            # return error
+            return $this->response->fail(['error' => $e->getMessage()], $e->getCode());
         }
 
         # get user's id
@@ -205,15 +220,23 @@ class UserController extends Controller
 
         # when not found user's id
         if (!empty($userId)) {
-            $errorRespone['warning'] = 'Unable to find the ID of users.';
-            return $this->json(false, $errorRespone, 400);
+            return $this->response->failNotFound(['error' => 'Unable to find the ID of users.'], 404);
         }
 
         # get new token
         $userToken = Auth::getUserApiToken($userId);
-        $status = $userToken->status;
-        $httpResponseCode = ($status) ? 200 : 500;
+
+        # if return status = false
+        if ($userToken->status === false) {
+            $errors = (!empty($userToken->errors) ? $userToken->errors : []);
+            return $this->response->fail(['error' => $errors], 500);
+        }
+
+        # return user data
         unset($userToken->status);
-        return $this->json($status, (array) $userToken, $httpResponseCode);
+        return $this->response->respond([
+            'status' => true,
+            'response' => (array) $userToken,
+        ]);
     }
 }

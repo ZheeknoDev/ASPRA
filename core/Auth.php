@@ -38,7 +38,7 @@ final class Auth
 
     final public static function getUserInfo() //: object
     {
-        if(!empty(self::$_userInfo)) {
+        if (!empty(self::$_userInfo)) {
             $userInfo = self::$_userInfo;
             unset($userInfo->password, $userInfo->remember, $userInfo->created_at, $userInfo->updated_at, $userInfo->verified_at);
             return $userInfo;
@@ -124,13 +124,10 @@ final class Auth
 
                         # when the token is expire
                         if ($hasExpired($userToken->expire_at)) {
-                            $code = 401;
                             $response = Response::instance();
-                            $response->returnJsonPattern->status = false;
-                            $response->returnJsonPattern->response = [
-                                'message' => $response->getResponseMessage($code) . ", Your token ware expired, please renew your token."
-                            ];
-                            return $response->json($response->returnJsonPattern, $code);
+                            return $response->failUnauthorized([
+                                'message' => $response->getResponseMessage(401) . ", Your token ware expired, please renew your token."
+                            ]);
                         }
 
                         $clientToken = DB::table('client_tokens')->run();
@@ -143,7 +140,7 @@ final class Auth
                             ];
                             # if verify success
                             $verifyApiToken = BasicAuth::instance()->verifyApiToken($data);
-                            if($verifyApiToken) {
+                            if ($verifyApiToken) {
                                 # user's authorization information
                                 $user->group = $client->group;
                                 self::$_userInfo = $user;

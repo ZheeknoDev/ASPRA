@@ -21,7 +21,7 @@ use Zheeknodev\Sipher\Sipher;
 
 # wellcome
 $router->get('/', function () {
-    return Response::instance()->json([
+    return Response::instance()->respond([
         'StatusCode' => http_response_code(),
         'Application' => \App\Core\Config::App('app_name'),
         'Version' => \App\Core\Config::App('app_version'),
@@ -32,24 +32,20 @@ $router->get('/', function () {
 });
 
 $router->group(['prefix' => '/api', 'middleware' => ['api']], function () use ($router) {
+    # version 1
     $router->group(['prefix' => '/v1'], function () use ($router) {
-        # register users
-        $router->post('/user/register', 'App\Controller\UserController:postUserRegister');
-        # renew user's token
-        $router->post('/user/renew-token', 'App\Controller\UserController:postUserRenewToken');
-        # group user
-        $router->group(['prefix' => '/user', 'middleware' => ['auth']], function () use ($router) {
-            # get user profile
-            $router->get('/profile', 'App\Controller\UserController:getUserProfile');
-            # update user profile
-            $router->post('/update-profile', 'App\Controller\UserController:postUpdateUserProfile');
-            # example for testing passing request through the middlewares
-            $router->get('/example-auth', function () {
-                return Response::instance()->json([
-                    'StatusCode' => http_response_code(),
-                    'Message' => "Welcome to API",
-                    'Response' => true,
-                ]);
+        # authenicate 
+        $router->group(['prefix' => '/auth'], function () use ($router) {
+            # register users
+            $router->post('/user/register', 'App\Controller\AuthController:postUserRegister');
+            # renew user's token
+            $router->post('/user/renew-token', 'App\Controller\AuthController:postUserRenewToken');
+            # group user
+            $router->group(['prefix' => '/user', 'middleware' => ['auth']], function () use ($router) {
+                # get user profile
+                $router->get('/profile', 'App\Controller\AuthController:getUserProfile');
+                # update user profile
+                $router->post('/update-profile', 'App\Controller\AuthController:postUpdateUserProfile');
             });
         });
     });
